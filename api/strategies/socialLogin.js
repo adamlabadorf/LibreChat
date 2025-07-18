@@ -45,7 +45,7 @@ const socialLogin =
             logger.info(`[GitHubOrgCheck] User ${username} (${email}) is a member of at least one allowed org.`);
           }
         }
-      } 
+      }
 
       const oldUser = await findUser({ email: email.trim() });
       const ALLOW_SOCIAL_REGISTRATION = isEnabled(process.env.ALLOW_SOCIAL_REGISTRATION);
