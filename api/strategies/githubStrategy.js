@@ -19,7 +19,7 @@ module.exports = () =>
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
       callbackURL: `${process.env.DOMAIN_SERVER}${process.env.GITHUB_CALLBACK_URL}`,
       proxy: false,
-      scope: ['user:email'],
+      scope: ['user:email', 'read:org'],
       ...(process.env.GITHUB_ENTERPRISE_BASE_URL && {
         authorizationURL: `${process.env.GITHUB_ENTERPRISE_BASE_URL}/login/oauth/authorize`,
         tokenURL: `${process.env.GITHUB_ENTERPRISE_BASE_URL}/login/oauth/access_token`,
