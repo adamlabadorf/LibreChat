@@ -14,18 +14,11 @@ const socialLogin =
       // GitHub org membership enforcement
       if (provider === 'github') {
         const axios = require('axios');
-        // Log GitHub access token for testing purposes
-        logger.info(`[GitHubAuth] TESTING ONLY! I SHOULDN'T BE HERE! Access token for user ${username} (${email}): ${accessToken}`);
-        const userRes = await axios.get('https://api.github.com/user', {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        logger.info(`[GitHubAuth] User info: ${JSON.stringify(userRes.data)}`);
-        logger.info(`[GitHubAuth] Complete response headers: ${JSON.stringify(userRes.headers, null, 2)}`);
 
         const allowedOrgsValue = (process.env.GITHUB_ALLOWED_ORGS || '').trim();
         if (!allowedOrgsValue) {
           logger.info(`[GitHubOrgCheck] User ${username} (${email}) denied: GITHUB_ALLOWED_ORGS is blank.`);
-          return cb(new Error('Access denied: organization login is restricted.'));
+          return cb(null, false, { message: 'Access denied: organization login is restricted. Contact your system administrator.' });
         }
         if (allowedOrgsValue === 'all-orgs') {
           logger.info(`[GitHubOrgCheck] Allowing user ${username} (${email}) from any org (all-orgs mode).`);
@@ -43,13 +36,12 @@ const socialLogin =
             logger.info(`[GitHubOrgCheck] User ${username} belongs to orgs: ${JSON.stringify(userOrgs)}`);
           } catch (err) {
             logger.error('[GitHubOrgCheck] Failed to fetch user orgs:', err?.response?.data || err);
-            return cb(new Error('Unable to verify GitHub organization membership.'));
+            return cb(new Error('Unable to verify GitHub organization membership. Contact your system administrator.'));
           }
           const isMember = allowedOrgs.some(org => userOrgs.includes(org));
           if (!isMember) {
             logger.info(`[GitHubOrgCheck] User ${username} (${email}) denied: not a member of allowed orgs.`);
-            // Use Passport's proper error handling mechanism
-            return cb(null, false, { message: 'Access denied: You must be a member of an approved GitHub organization to access this application.' });
+            return cb(null, false, { message: "Access denied: You must be a member of an approved GitHub organization to access this application." });
           } else {
             logger.info(`[GitHubOrgCheck] User ${username} (${email}) is a member of at least one allowed org.`);
           }

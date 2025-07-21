@@ -142,7 +142,7 @@ router.get(
 router.get(
   '/github/callback',
   passport.authenticate('github', {
-    failureRedirect: `${domains.client}/login?error=github_auth_failed`,
+    failureRedirect: `${domains.client}/oauth/error`,
     failureMessage: true,
     session: false,
     scope: ['user:email', 'read:user', 'read:org'],
