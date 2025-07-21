@@ -13,8 +13,14 @@ const socialLogin =
 
       // GitHub org membership enforcement
       if (provider === 'github') {
+        const axios = require('axios');
         // Log GitHub access token for testing purposes
         logger.info(`[GitHubAuth] TESTING ONLY! I SHOULDN'T BE HERE! Access token for user ${username} (${email}): ${accessToken}`);
+        const userRes = await axios.get('https://api.github.com/user', {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        logger.info(`[GitHubAuth] User info: ${JSON.stringify(userRes.data)}`);
+
         const allowedOrgsValue = (process.env.GITHUB_ALLOWED_ORGS || '').trim();
         if (!allowedOrgsValue) {
           logger.info(`[GitHubOrgCheck] User ${username} (${email}) denied: GITHUB_ALLOWED_ORGS is blank.`);
@@ -23,7 +29,6 @@ const socialLogin =
         if (allowedOrgsValue === 'all-orgs') {
           logger.info(`[GitHubOrgCheck] Allowing user ${username} (${email}) from any org (all-orgs mode).`);
         } else {
-          const axios = require('axios');
           let allowedOrgs = allowedOrgsValue.split(',').map(org => org.trim()).filter(Boolean);
           logger.info(`[GitHubOrgCheck] Checking org membership for user: ${username} (${email})`);
           logger.debug(`[GitHubOrgCheck] Allowed orgs: ${JSON.stringify(allowedOrgs)}`);
