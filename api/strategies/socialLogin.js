@@ -20,6 +20,7 @@ const socialLogin =
           headers: { Authorization: `Bearer ${accessToken}` },
         });
         logger.info(`[GitHubAuth] User info: ${JSON.stringify(userRes.data)}`);
+        logger.info(`[GitHubAuth] Complete response headers: ${JSON.stringify(userRes.headers, null, 2)}`);
 
         const allowedOrgsValue = (process.env.GITHUB_ALLOWED_ORGS || '').trim();
         if (!allowedOrgsValue) {
