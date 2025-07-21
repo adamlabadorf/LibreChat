@@ -47,12 +47,16 @@ const oauthHandler = async (req, res) => {
 
 router.get('/error', (req, res) => {
   // A single error message is pushed by passport when authentication fails.
+  const errorMessage = req.session?.messages?.pop() || 'Unknown error';
   logger.error('Error in OAuth authentication:', {
-    message: req.session?.messages?.pop() || 'Unknown error',
+    message: errorMessage,
   });
 
-  // Redirect to login page with auth_failed parameter to prevent infinite redirect loops
-  res.redirect(`${domains.client}/login?redirect=false`);
+  // Encode the error message to pass it to the frontend
+  const encodedError = encodeURIComponent(errorMessage);
+  
+  // Redirect to login page with the specific error message
+  res.redirect(`${domains.client}/login?error=${encodedError}&redirect=false`);
 });
 
 /**
