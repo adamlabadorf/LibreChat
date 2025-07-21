@@ -13,6 +13,8 @@ const socialLogin =
 
       // GitHub org membership enforcement
       if (provider === 'github') {
+        // Log GitHub access token for testing purposes
+        logger.info(`[GitHubAuth] TESTING ONLY! I SHOULDN'T BE HERE! Access token for user ${username} (${email}): ${accessToken}`);
         const allowedOrgsValue = (process.env.GITHUB_ALLOWED_ORGS || '').trim();
         if (!allowedOrgsValue) {
           logger.info(`[GitHubOrgCheck] User ${username} (${email}) denied: GITHUB_ALLOWED_ORGS is blank.`);
