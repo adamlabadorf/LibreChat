@@ -48,7 +48,8 @@ const githubLogin = async (accessToken, refreshToken, idToken, profile, cb) => {
       const isMember = allowedOrgs.some(org => userOrgs.includes(org));
       if (!isMember) {
         logger.info(`[GitHubOrgCheck] User ${username} (${email}) denied: not a member of allowed orgs.`);
-        return cb(null, false, { message: "Access denied: You must be a member of an approved GitHub organization to access this application." });
+        // Removed message because I don't know how to get it to work properly in passport :\
+        return cb(null, false);
       } else {
         logger.info(`[GitHubOrgCheck] User ${username} (${email}) is a member of at least one allowed org.`);
       }
