@@ -19,19 +19,19 @@ const githubLogin = async (accessToken, refreshToken, idToken, profile, cb) => {
     // GitHub org membership enforcement
     const axios = require('axios');
     const allowedOrgsValue = (process.env.GITHUB_ALLOWED_ORGS || '').trim();
-    
+
     if (!allowedOrgsValue) {
       logger.info(`[GitHubOrgCheck] User ${username} (${email}) denied: GITHUB_ALLOWED_ORGS is blank.`);
       return cb(null, false, { message: 'Access denied: organization login is restricted. Contact your system administrator.' });
     }
-    
+
     if (allowedOrgsValue === 'all-orgs') {
       logger.info(`[GitHubOrgCheck] Allowing user ${username} (${email}) from any org (all-orgs mode).`);
     } else {
       let allowedOrgs = allowedOrgsValue.split(',').map(org => org.trim()).filter(Boolean);
       logger.info(`[GitHubOrgCheck] Checking org membership for user: ${username} (${email})`);
       logger.debug(`[GitHubOrgCheck] Allowed orgs: ${JSON.stringify(allowedOrgs)}`);
-      
+
       let userOrgs = [];
       try {
         logger.info('[GitHubOrgCheck] Fetching user organizations from GitHub API...');
@@ -44,7 +44,7 @@ const githubLogin = async (accessToken, refreshToken, idToken, profile, cb) => {
         logger.error('[GitHubOrgCheck] Failed to fetch user orgs:', err?.response?.data || err);
         return cb(new Error('Unable to verify GitHub organization membership. Contact your system administrator.'));
       }
-      
+
       const isMember = allowedOrgs.some(org => userOrgs.includes(org));
       if (!isMember) {
         logger.info(`[GitHubOrgCheck] User ${username} (${email}) denied: not a member of allowed orgs.`);

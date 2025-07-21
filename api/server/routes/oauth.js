@@ -54,7 +54,7 @@ router.get('/error', (req, res) => {
 
   // Encode the error message to pass it to the frontend
   const encodedError = encodeURIComponent(errorMessage);
-  
+
   // Redirect to login page with the specific error message
   res.redirect(`${domains.client}/login?error=${encodedError}&redirect=false`);
 });
