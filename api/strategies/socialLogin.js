@@ -48,10 +48,8 @@ const socialLogin =
           const isMember = allowedOrgs.some(org => userOrgs.includes(org));
           if (!isMember) {
             logger.info(`[GitHubOrgCheck] User ${username} (${email}) denied: not a member of allowed orgs.`);
-            // Create a specific error that will be handled by the OAuth error route
-            const error = new Error('GitHub organization membership required');
-            error.message = 'Access denied: You must be a member of an approved GitHub organization to access this application.';
-            return cb(error);
+            // Use Passport's proper error handling mechanism
+            return cb(null, false, { message: 'Access denied: You must be a member of an approved GitHub organization to access this application.' });
           } else {
             logger.info(`[GitHubOrgCheck] User ${username} (${email}) is a member of at least one allowed org.`);
           }
